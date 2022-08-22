@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Hash Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        var socket = io.connect("http://localhost:5000");
+        socket.on("connect", function () {
+          console.log("User:"+ socket.id +" connected!");
+        });
+        socket.on("message", function (data) {
+          if (socket.id == data.user_id){
+            $("#messages").append($('<p class="me">').text(data.username + ": " + data.message));
+          }else{
+            $("#messages").append($('<p class="other">').text(data.username + ": " + data.message));
+          }
+          
+        });
+
+        $("#sendBtn").on('click', function () {
+          
+          data = {
+            user_id: socket.id,
+            username: $("#username").val(),
+            message: $("#message").val(),
+          };   
+
+          socket.send(data);
+          $('#message').val('');
+        });
+
+      });
+    </script>
+    <div class="message" id="messages"></div>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="text" id="message" placeholder="Message" />
+    <button id="sendBtn">Send</button>
+  </body>
+</html>
