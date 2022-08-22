@@ -1,6 +1,4 @@
 from datetime import datetime
-from email import message
-from socket import socket
 from flask import Flask, render_template
 from flask_socketio import SocketIO, send
 
